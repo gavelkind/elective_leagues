@@ -1,19 +1,19 @@
 create_league_effect = {
-	primary_title = {
-		hidden_tooltip = {  # Hide tooltip because it would refer to old primary title
-			# TODO: if already elective, do i need sneakiness for the cooldowns?
+    primary_title = {
+        hidden_tooltip = {  # Hide tooltip because it would refer to old primary title
+            # TODO: if already elective, do i need sneakiness for the cooldowns?
             succession_w_cooldown = feudal_elective
-		}
+        }
 
-		if = {
-			limit = { has_dlc = "Zeus" }
+        if = {
+            limit = { has_dlc = "Zeus" }
 
-	        add_law_w_cooldown = law_voting_power_1
-	        add_law_w_cooldown = war_voting_power_1
-	        add_law_w_cooldown = revoke_title_voting_power_1
+            add_law_w_cooldown = law_voting_power_1
+            add_law_w_cooldown = war_voting_power_1
+            add_law_w_cooldown = revoke_title_voting_power_1
             add_law_w_cooldown = succession_voting_power_1  # Allows feudal elective in Muslim & Indian realms :)
-	    }
-	}
+        }
+    }
 
     any_opinion_modifier_target = {
         limit = {
@@ -30,22 +30,22 @@ create_league_effect = {
                 modifier = opinion_cofounder
             }
 
-	        # Create a NAP
-	        opinion = {
-	            modifier = in_non_aggression_pact
-	            years = 20
-	            who = ROOT
-	            origin_description = VOLUNTARY_LIEGE
-	        }
-	        ROOT = {
-	            opinion = {
-	                modifier = in_non_aggression_pact
-	                years = 20
-	                who = PREV
-	                origin_description = VOLUNTARY_VASSAL
-	            }
-	        }
-	    }
+            # Create a NAP
+            opinion = {
+                modifier = in_non_aggression_pact
+                years = 20
+                who = ROOT
+                origin_description = VOLUNTARY_LIEGE
+            }
+            ROOT = {
+                opinion = {
+                    modifier = in_non_aggression_pact
+                    years = 20
+                    who = PREV
+                    origin_description = VOLUNTARY_VASSAL
+                }
+            }
+        }
 
         set_defacto_liege = PREV
 
@@ -53,7 +53,7 @@ create_league_effect = {
     }
 
     custom_tooltip = {
-    	text = NAPS_WITH_NEW_VASSALS
+        text = NAPS_WITH_NEW_VASSALS
     }
 
     wipe_council_effect = yes
