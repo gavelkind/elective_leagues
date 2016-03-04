@@ -1,0 +1,81 @@
+decisions = {
+
+    create_elective_league = {
+
+        potential = {
+            ai = no  # adjacency calculation is expensive, so ai instead uses MTTH event ElectiveLeagues.30
+            OR = {
+                real_tier = KING
+                real_tier = DUKE
+                real_tier = COUNT
+            }
+            league_potential_trigger = yes
+        }
+
+        allow = {
+            is_feudal = yes
+            religion_allows_feudal_elective_trigger = yes
+            any_independent_ruler = {
+                THIS_and_PREV_same_rank_trigger = yes
+                THIS_can_join_PREV_league_trigger = yes
+                THIS_and_FROM_are_adjacent_trigger = yes
+            }
+        }
+
+        effect = {
+            custom_tooltip = {
+                text = create_elective_league_effect
+                hidden_tooltip = {
+                    character_event = { id = ElectiveLeagues.31 }
+                }
+            }
+        }
+
+    }
+
+}
+
+
+targetted_decisions = {
+
+    vassalize_new_elector = {
+
+        from_potential = {
+            ai = no  # "ai_target_filter = all" is expensive, so ai instead uses MTTH event ElectiveLeagues.40
+            league_potential_trigger = yes
+        }
+
+        potential = {
+            NOT = { character = FROM }
+            league_potential_trigger = yes
+        }
+
+        allow = {
+            FROM = {
+                primary_title = {
+                    has_law = succ_feudal_elective
+                    is_titular = yes
+                }
+
+                # Sorry for the indent, players, but it gets the scopes correct for sharing scripted triggers
+                ROOT = {
+                    custom_tooltip = {
+                        text = LOWER_RANK_THAN_US
+                        lower_real_tier_than = PREV
+                    }
+
+                    THIS_can_be_elector_of_PREV_trigger = yes
+                    THIS_can_join_PREV_league_trigger = yes
+                    THIS_and_FROM_are_adjacent_trigger = yes
+
+                    NOT = { has_opinion_modifier = { who = FROM  modifier = opinion_granted_independence } }
+                }
+            }
+        }
+
+        effect = {
+            add_THIS_to_FROM_existing_league_effect = yes
+        }
+
+    }
+}

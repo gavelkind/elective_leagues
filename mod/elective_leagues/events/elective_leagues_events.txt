@@ -1,0 +1,275 @@
+namespace = ElectiveLeagues
+
+
+# AI ruler tries to create a new league
+character_event = {
+    id = ElectiveLeagues.30
+    hide_window = yes
+
+    trigger = {
+        ai = yes  # Players instead use a similar decision, create_elective_league
+
+        OR = {
+            real_tier = KING
+            real_tier = DUKE
+            real_tier = COUNT
+        }
+
+        is_feudal = yes
+        league_potential_trigger = yes
+        religion_allows_feudal_elective_trigger = yes
+    }
+
+    mean_time_to_happen = {
+        years = 1
+    }
+
+    immediate = {
+        character_event = { id = ElectiveLeagues.31 }
+    }
+}
+
+
+# ROOT tries to create a new league (players from decision; AI from event ElectiveLeagues.30)
+character_event = {
+    id = ElectiveLeagues.31
+    is_triggered_only = yes
+    hide_window = yes
+
+    immediate = {
+
+        #any_opinion_modifier_target = {
+        #    limit = {
+        #        reverse_has_opinion_modifier = {
+        #            who = PREV
+        #            modifier = opinion_cofounder
+        #        }
+        #    }
+        #    reverse_remove_opinion = {
+        #        who = PREV
+        #        modifier = opinion_cofounder
+        #    }
+        #}
+
+        set_variable = { which = num_cofounders  value = 0 }
+        character_event = { id = ElectiveLeagues.32 }  # Find recursively-adjacent cofounders
+        character_event = { id = ElectiveLeagues.35 }  # Show list of cofounders; allow creating a higher title if >=2
+    }
+}
+
+# ROOT is counting cofounders (recursive). Realms adjacent to FROM are now eligible to join.
+character_event = {
+    id = ElectiveLeagues.32
+    is_triggered_only = yes
+    hide_window = yes
+    #desc = ElectiveLeagues_event_32_DESC
+
+    immediate = {
+        any_independent_ruler = {
+            limit = {
+                # Not already in ROOT's league
+                NOT = { character = ROOT }
+                NOT = { reverse_has_opinion_modifier = { who = PREV  modifier = opinion_cofounder } }
+
+                # Can join ROOT's league...
+                THIS_and_PREV_same_rank_trigger = yes
+                THIS_can_join_PREV_league_trigger = yes
+
+                # ...by virtue of being adjacent to FROM (who could be ROOT or another cofounder)
+                THIS_and_FROM_are_adjacent_trigger = yes
+            }
+
+            ROOT = { change_variable = { which = num_cofounders  value = 1 } }
+            reverse_opinion = { who = PREV  modifier = opinion_cofounder }
+            character_event = { id = ElectiveLeagues.33 }  # Bounce back here with THIS as FROM
+        }
+    }
+
+    option = {
+        name = OK
+    }
+}
+
+# Bounce event
+character_event = {
+    id = ElectiveLeagues.33
+    is_triggered_only = yes
+    hide_window = yes
+
+    immediate = {
+        FROM = {
+            character_event = { id = ElectiveLeagues.32 }
+        }
+    }
+}
+
+# ROOT has counted their cofounders and may be able to create a new elective realm
+character_event = {
+    id = ElectiveLeagues.35
+    is_triggered_only = yes
+    desc = ElectiveLeagues_event_35_DESC
+    picture = GFX_evt_coronation
+
+    option = {
+        trigger = {
+            tier = COUNT
+            check_variable = { which = num_cofounders  value = 2 }
+        }
+        name = ElectiveLeagues_event_35_DUCHY
+        ai_chance = { factor = 90 }
+
+        primary_title = {
+            create_title = {
+                tier = DUKE
+                landless = no
+                temporary = no
+                custom_created = yes
+                culture = ROOT
+                holder = ROOT
+                base_title = THIS
+                copy_title_laws = yes
+                name = ELECTIVE_REALM_NAME_DUKE
+            }
+        }
+
+        create_league_effect = yes
+    }
+
+    option = {
+        trigger = {
+            tier = DUKE
+            check_variable = { which = num_cofounders  value = 2 }
+        }
+        name = ElectiveLeagues_event_35_KINGDOM
+        ai_chance = { factor = 90 }
+
+        primary_title = {
+            create_title = {
+                tier = KING
+                landless = no
+                temporary = no
+                custom_created = yes
+                culture = ROOT
+                holder = ROOT
+                base_title = THIS
+                copy_title_laws = yes
+                name = ELECTIVE_REALM_NAME_KING
+            }
+        }
+
+        create_league_effect = yes
+    }
+
+    option = {
+        trigger = {
+            tier = KING
+            check_variable = { which = num_cofounders  value = 2 }
+        }
+        name = ElectiveLeagues_event_35_EMPIRE
+        ai_chance = { factor = 90 }
+
+        primary_title = {
+            create_title = {
+                tier = EMPEROR
+                landless = no
+                temporary = no
+                custom_created = yes
+                culture = ROOT
+                holder = ROOT
+                base_title = THIS
+                copy_title_laws = yes
+                name = ELECTIVE_REALM_NAME_EMPEROR
+            }
+        }
+
+        create_league_effect = yes
+    }
+
+    option = {
+        name = ElectiveLeagues_event_35_NEVER_MIND
+        ai_chance = { factor = 10 }
+
+        any_opinion_modifier_target = {
+            limit = {
+                reverse_has_opinion_modifier = {
+                    who = PREV
+                    modifier = opinion_cofounder
+                }
+            }
+            hidden_tooltip = {
+                reverse_remove_opinion = {
+                    who = PREV
+                    modifier = opinion_cofounder
+                }
+            }
+        }
+    }
+}
+
+
+# AI ruler of an elective league tries to vassalize more neighbors
+character_event = {
+    id = ElectiveLeagues.40
+    hide_window = yes
+
+    trigger = {
+        ai = yes  # Players instead use a targeted decision, vassalize_new_elector
+
+        higher_real_tier_than = COUNT
+        independent = yes
+        in_revolt = no
+
+        primary_title = {
+            has_law = succ_feudal_elective
+            is_titular = yes
+        }
+    }
+
+    mean_time_to_happen = {
+        years = 1
+    }
+
+    immediate = {
+        any_independent_ruler = {
+            limit = {
+                NOT = { character = ROOT }
+                league_potential_trigger = yes
+                lower_real_tier_than = PREV
+                THIS_can_be_elector_of_PREV_trigger = yes
+                THIS_can_join_PREV_league_trigger = yes
+                THIS_and_FROM_are_adjacent_trigger = yes  # Hoping FROM is treated as ROOT when no FROM...
+                NOT = { has_opinion_modifier = { who = ROOT  modifier = opinion_granted_independence } }
+            }
+
+            character_event = { id = ElectiveLeagues.46 }
+        }
+    }
+}
+
+# ROOT is asked by FROM to join an existing elective league
+# Triggered by AI event ElectiveLeagues.40
+# Player decision vassalize_new_elector does NOT use this event because FROMFROM and interaction description
+# Todo: add option to players to decline, a persistent opinion modifier for having declined, and a way to undo it...
+character_event = {
+    id = ElectiveLeagues.46
+    desc = WELCOME_TO_EXISTING_LEAGUE
+    picture = GFX_evt_coronation  # ...
+    is_triggered_only = yes
+
+    option = {
+        name = OK
+        add_THIS_to_FROM_existing_league_effect = yes
+    }
+}
+
+
+##For testing |wipe_council_effect|
+#character_event = {
+#    id = ElectiveLeagues.60
+#    is_triggered_only = yes
+#    hide_window = yes
+#
+#    immediate = {
+#        wipe_council_effect = yes
+#    }
+#}
