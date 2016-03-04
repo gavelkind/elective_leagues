@@ -6,4 +6,4 @@ League titles are [titular](http://www.ckiiwiki.com/Titular_title). Since all va
 
 In addition to allies, you can partner with potential allies (NAPs and close relatives) and effective allies (friends and [tributaries](http://www.ckiiwiki.com/Casus_Belli#Tributary)). In all cases, opinion must be at least 26.
 
-Install: [from Steam workshop](http://steamcommunity.com/sharedfiles/filedetails/?id=637603578) or [elective_leagues.zip](https://www.squarefree.com/crusaderkings/mod_zips/elective_leagues.zip)
+Install: [from Steam workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=637603578) or [elective_leagues.zip](https://www.squarefree.com/crusaderkings/mod_zips/elective_leagues.zip)
