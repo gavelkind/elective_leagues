@@ -6,14 +6,11 @@ character_event = {
     id = ElectiveLeagues.30
     hide_window = yes
 
-    trigger = {
-        ai = yes  # Players instead use a similar decision, create_elective_league
+    only_playable = yes # This counts only every count and above ruler.
+    ai = yes  # Players instead use a similar decision, create_elective_league
 
-        OR = {
-            real_tier = KING
-            real_tier = DUKE
-            real_tier = COUNT
-        }
+    trigger = {
+        higher_real_tier_than = BARRON
 
         is_feudal = yes
         league_potential_trigger = yes
@@ -212,12 +209,13 @@ character_event = {
     id = ElectiveLeagues.40
     hide_window = yes
 
+    only_independant = yes # Excludes vassals and tributaries and counts only every count and above ruler.
+    ai = yes  # Players instead use a targeted decision, vassalize_new_elector
+    
     trigger = {
-        ai = yes  # Players instead use a targeted decision, vassalize_new_elector
-
-        higher_real_tier_than = COUNT
-        independent = yes
+    
         in_revolt = no
+        higher_real_tier_than = COUNT
 
         primary_title = {
             has_law = succ_feudal_elective
